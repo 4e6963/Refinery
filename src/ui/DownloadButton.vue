@@ -34,7 +34,7 @@ async function download() {
 <template>
   <div class="download">
     <button type="button" class="primary" :disabled="disabled || busy" data-testid="download" @click="download">
-      {{ busy ? 'Erzeuge Excel …' : 'Excel herunterladen' }}
+      {{ busy ? 'Creating Excel …' : 'Download Excel' }}
     </button>
     <span v-if="error" class="error">{{ error }}</span>
   </div>

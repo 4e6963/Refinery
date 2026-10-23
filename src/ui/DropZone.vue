@@ -33,8 +33,8 @@ function onChange() {
     @drop.prevent="onDrop"
   >
     <input ref="input" type="file" accept="application/pdf,.pdf" multiple hidden @change="onChange" />
-    <span class="title">PDFs hierher ziehen oder klicken</span>
-    <span class="hint">Revenue-, JIB- und AR-Abrechnungen, beliebig viele Monate. Die Dateien verlassen das Gerät nicht.</span>
+    <span class="title">Drop PDFs here or click to select</span>
+    <span class="hint">Revenue, JIB and AR statements, any number of months. Files never leave your device.</span>
   </label>
 </template>
 

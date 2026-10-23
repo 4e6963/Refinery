@@ -27,7 +27,7 @@ export async function parsePdf(
         monthSource: fileMonth ? 'filename' : statement.statementMonth ? 'content' : undefined,
       }
     }
-    result.error = 'Unbekanntes Dokumentformat'
+    result.error = 'Unknown document format'
   } catch (err) {
     result.error = err instanceof Error ? err.message : String(err)
   }

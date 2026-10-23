@@ -107,7 +107,7 @@ function groupByMonth(files: ParsedFile[], warnings: Warning[]) {
       warnings.push({
         level: 'error',
         fileName: file.fileName,
-        message: 'Monat unbekannt – Datei wird nicht berücksichtigt',
+        message: 'Unknown month – file is ignored',
       })
       continue
     }
@@ -119,7 +119,7 @@ function groupByMonth(files: ParsedFile[], warnings: Warning[]) {
         level: 'error',
         month: file.month,
         fileName: file.fileName,
-        message: `Doppelte Abrechnung für ${file.month}, bereits geladen: ${existing.fileName} – ignoriert`,
+        message: `Duplicate statement for ${file.month}, already loaded: ${existing.fileName} – ignored`,
       })
       continue
     }

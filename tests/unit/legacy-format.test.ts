@@ -190,7 +190,7 @@ describe('legacy format', () => {
       const broken = structuredClone(statement)
       broken.entries[0].netValue += 1
       expect(validateRevenue(broken)).toEqual([
-        'Neue Erlöse Net Value: gelesen 265.01, laut Dokument 265.00',
+        'New revenue Net Value: parsed 265.01, document says 265.00',
       ])
     })
   })
@@ -232,7 +232,7 @@ describe('legacy format', () => {
     it('cross-checks the invoices against the JIB', () => {
       const jib = parseJib(legacyText(jibPages))
       expect(validateReceivables(statement, jib)).toEqual([
-        'Rechnung 1000002 AR vs. JIB: gelesen 0.00, laut Dokument 1.00',
+        'Invoice 1000002 AR vs. JIB: parsed 0.00, document says 1.00',
       ])
     })
   })

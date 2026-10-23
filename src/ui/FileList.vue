@@ -13,17 +13,17 @@ function onMonth(id: number, event: Event) {
   if (value) emit('month', id, value)
 }
 
-const SOURCE_LABEL = { filename: 'aus Dateiname', content: 'aus Inhalt', manual: 'manuell' } as const
+const SOURCE_LABEL = { filename: 'from file name', content: 'from content', manual: 'manual' } as const
 </script>
 
 <template>
   <table class="files" data-testid="file-list">
     <thead>
       <tr>
-        <th>Datei</th>
-        <th>Typ</th>
+        <th>File</th>
+        <th>Type</th>
         <th>Format</th>
-        <th>Monat</th>
+        <th>Month</th>
         <th>Status</th>
         <th />
       </tr>
@@ -38,7 +38,7 @@ const SOURCE_LABEL = { filename: 'aus Dateiname', content: 'aus Inhalt', manual:
             <input
               type="month"
               :value="e.parsed.month ?? ''"
-              :aria-label="`Monat für ${e.file.name}`"
+              :aria-label="`Month for ${e.file.name}`"
               @change="onMonth(e.id, $event)"
             />
             <small v-if="e.parsed.monthSource">{{ SOURCE_LABEL[e.parsed.monthSource] }}</small>
@@ -46,13 +46,13 @@ const SOURCE_LABEL = { filename: 'aus Dateiname', content: 'aus Inhalt', manual:
           <template v-else>–</template>
         </td>
         <td class="status">
-          <template v-if="e.status === 'queued'">wartet</template>
-          <template v-else-if="e.status === 'reading'">liest … {{ Math.round(e.progress * 100) }} %</template>
-          <template v-else-if="e.status === 'done'">✓ gelesen</template>
-          <span v-else class="error">{{ e.parsed?.error ?? 'Fehler' }}</span>
+          <template v-if="e.status === 'queued'">queued</template>
+          <template v-else-if="e.status === 'reading'">reading … {{ Math.round(e.progress * 100) }} %</template>
+          <template v-else-if="e.status === 'done'">✓ read</template>
+          <span v-else class="error">{{ e.parsed?.error ?? 'Error' }}</span>
         </td>
         <td>
-          <button class="icon" type="button" :aria-label="`${e.file.name} entfernen`" @click="emit('remove', e.id)">✕</button>
+          <button class="icon" type="button" :aria-label="`Remove ${e.file.name}`" @click="emit('remove', e.id)">✕</button>
         </td>
       </tr>
     </tbody>

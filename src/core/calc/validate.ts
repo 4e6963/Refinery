@@ -17,7 +17,7 @@ const KIND_LABEL: Record<StatementKind, string> = {
 }
 
 function mismatch(label: string, parsed: number, printed: number): string {
-  return `${label}: gelesen ${formatHundredths(parsed)}, laut Dokument ${formatHundredths(printed)}`
+  return `${label}: parsed ${formatHundredths(parsed)}, document says ${formatHundredths(printed)}`
 }
 
 function deductionTotals(entries: RevenueEntry[]): Record<string, number> {
@@ -33,13 +33,13 @@ function deductionTotals(entries: RevenueEntry[]): Record<string, number> {
 
 export function validateRevenue(statement: RevenueStatement): string[] {
   const problems: string[] = []
-  if (statement.controls.length === 0) problems.push('Keine Summenzeilen gefunden')
+  if (statement.controls.length === 0) problems.push('No total lines found')
   for (const control of statement.controls) {
     const entries =
       control.section === 'overall'
         ? statement.entries
         : statement.entries.filter((e) => e.section === control.section)
-    const label = { current: 'Neue Erlöse', prior: 'Erlöse aus Vorperioden', overall: 'Gesamt' }[
+    const label = { current: 'New revenue', prior: 'Prior-period revenue', overall: 'Overall' }[
       control.section
     ]
     const value = sum(entries.map((e) => e.netValue))
@@ -66,10 +66,10 @@ export function validateRevenue(statement: RevenueStatement): string[] {
 export function validateExpenses(statement: ExpenseStatement): string[] {
   const problems: string[] = []
   for (const invoice of statement.invoices) {
-    const where = `Rechnung ${invoice.invoiceNumber} (Well ${invoice.wellCode})`
+    const where = `Invoice ${invoice.invoiceNumber} (well ${invoice.wellCode})`
     for (const section of invoice.sections) {
       if (section.totalShare === undefined) {
-        problems.push(`${where}, ${section.name}: Summenzeile fehlt`)
+        problems.push(`${where}, ${section.name}: total line missing`)
         continue
       }
       const items = sum(section.items.map((i) => i.share))
@@ -78,12 +78,12 @@ export function validateExpenses(statement: ExpenseStatement): string[] {
       }
     }
     if (invoice.netAmount === undefined) {
-      problems.push(`${where}: Rechnungsbetrag fehlt`)
+      problems.push(`${where}: invoice amount missing`)
       continue
     }
     const sections = sum(invoice.sections.map((s) => s.totalShare ?? 0))
     if (sections !== invoice.netAmount) {
-      problems.push(mismatch(`${where} Rechnungsbetrag`, sections, invoice.netAmount))
+      problems.push(mismatch(`${where} invoice amount`, sections, invoice.netAmount))
     }
   }
   return problems
@@ -101,21 +101,21 @@ export function validateReceivables(ar: ReceivableStatement, jib: ExpenseStateme
     const amount = entry.amount ?? 0
     const invoice = invoices.get(entry.invoiceNumber)
     if (!invoice) {
-      problems.push(`AR-Rechnung ${entry.invoiceNumber} (Well ${entry.wellCode}) fehlt in der JIB`)
+      problems.push(`AR invoice ${entry.invoiceNumber} (well ${entry.wellCode}) missing in JIB`)
       continue
     }
     if (invoice.wellCode !== entry.wellCode) {
       problems.push(
-        `Rechnung ${entry.invoiceNumber}: Well ${entry.wellCode} in AR, ${invoice.wellCode} in JIB`,
+        `Invoice ${entry.invoiceNumber}: well ${entry.wellCode} in AR, ${invoice.wellCode} in JIB`,
       )
     }
     if (invoice.netAmount !== undefined && invoice.netAmount !== amount) {
-      problems.push(mismatch(`Rechnung ${entry.invoiceNumber} AR vs. JIB`, amount, invoice.netAmount))
+      problems.push(mismatch(`Invoice ${entry.invoiceNumber} AR vs. JIB`, amount, invoice.netAmount))
     }
   }
   for (const invoice of jib.invoices) {
     if (!seen.has(invoice.invoiceNumber)) {
-      problems.push(`JIB-Rechnung ${invoice.invoiceNumber} (Well ${invoice.wellCode}) fehlt in AR`)
+      problems.push(`JIB invoice ${invoice.invoiceNumber} (well ${invoice.wellCode}) missing in AR`)
     }
   }
   return problems
@@ -131,7 +131,7 @@ export function validate(month: YearMonth, kinds: Map<StatementKind, ParsedFile>
   for (const file of kinds.values()) {
     const content = file.statement?.statementMonth
     if (file.monthSource === 'filename' && content && content !== month) {
-      push(file, [`Dateiname ${month}, Inhalt deutet auf ${content}`])
+      push(file, [`File name says ${month}, content suggests ${content}`])
     }
   }
   const revenue = kinds.get('revenue')
@@ -143,7 +143,7 @@ export function validate(month: YearMonth, kinds: Map<StatementKind, ParsedFile>
     push(receivables, validateReceivables(receivables.statement, expenses.statement))
   }
   for (const kind of ['revenue', 'expenses'] as const) {
-    if (!kinds.has(kind)) push(undefined, [`${KIND_LABEL[kind]}-Abrechnung fehlt`])
+    if (!kinds.has(kind)) push(undefined, [`${KIND_LABEL[kind]} statement missing`])
   }
   return warnings
 }

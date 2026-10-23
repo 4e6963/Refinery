@@ -56,10 +56,10 @@ function cell(row: WellRow, c: (typeof COLUMNS)[number]): string {
           {{ formatMonth(m.month) }}
         </button>
         <button role="tab" type="button" :aria-selected="tab === 'total'" @click="tab = 'total'">
-          Gesamt {{ report.year ?? '' }}
+          Total {{ report.year ?? '' }}
         </button>
       </div>
-      <label class="filter"><input v-model="onlyWithData" type="checkbox" /> nur Bohrungen mit Daten</label>
+      <label class="filter"><input v-model="onlyWithData" type="checkbox" /> only wells with data</label>
     </div>
 
     <div class="scroll">
@@ -83,7 +83,7 @@ function cell(row: WellRow, c: (typeof COLUMNS)[number]): string {
         <tfoot>
           <tr>
             <td />
-            <td>Summe ({{ rows.length }} Bohrungen)</td>
+            <td>Total ({{ rows.length }} wells)</td>
             <td v-for="c in COLUMNS" :key="c.key" class="num" :class="{ neg: sheet.totals[c.key] < 0 }">
               {{ formatAmount(sheet.totals[c.key]) }}
             </td>

@@ -11,10 +11,10 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'Refinery – Abrechnungen zu Excel',
+        name: 'Refinery – statements to Excel',
         short_name: 'Refinery',
-        description: 'Liest Abrechnungs-PDFs im Browser und erzeugt eine Jahres-Excel. Alle Daten bleiben auf dem Gerät.',
-        lang: 'de',
+        description: 'Reads statement PDFs in your browser and creates a year-end Excel workbook. All data stays on your device.',
+        lang: 'en',
         theme_color: '#1f4e5f',
         background_color: '#f6f7f9',
         display: 'standalone',

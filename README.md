@@ -1,68 +1,71 @@
 # Refinery
 
-Browser-App (PWA, offline-fähig, ohne Backend), die monatliche Abrechnungs-PDFs
-(Revenue, Joint Interest Billing, Accounts Receivable) einliest, prüft und als
-Jahres-Excel (`.xlsx`) ausgibt. Alle Daten bleiben im Browser.
+Browser app (PWA, works offline, no backend) that reads monthly statement PDFs
+(Revenue, Joint Interest Billing, Accounts Receivable), validates them and
+exports a year-end Excel workbook (`.xlsx`). All data stays in the browser.
 
-## Entwicklung
+## Development
 
 ```sh
 npm install
-npm run dev          # Entwicklungsserver
-npm run typecheck    # inkl. core ohne DOM-Typen (tsconfig.core.json)
-npm test             # Vitest (Unit + Integration)
-npm run test:e2e     # Playwright gegen den Produktions-Build (inkl. Offline-Test)
-npm run build        # Produktions-Build nach dist/
+npm run dev          # development server
+npm run typecheck    # includes core without DOM types (tsconfig.core.json)
+npm test             # Vitest (unit + integration)
+npm run test:e2e     # Playwright against the production build (incl. offline test)
+npm run build        # production build into dist/
 ```
 
-## Architektur
+Pushes to `main` are deployed to GitHub Pages by `.github/workflows/deploy.yml`.
 
-| Pfad | Inhalt |
+## Architecture
+
+| Path | Contents |
 | --- | --- |
-| `src/core/pdf` | Textextraktion mit Positionen, Zeilen-/Festbreiten-Rekonstruktion über x/y |
-| `src/core/formats` | Format-Plug-ins; `registry.ts` listet alle Formate |
-| `src/core/formats/legacy` | Parser für das Legacy-Layout (Revenue, JIB, AR) |
-| `src/core/calc` | Reine Funktionen: Beträge, Monatszuordnung, Aggregation, Prüfungen |
-| `src/core/excel` | Export mit ExcelJS (nur Werte, keine Formeln) |
-| `src/worker` | Web Worker, stellt `parse`, `buildReport`, `exportXlsx` via Comlink bereit |
-| `src/ui` | Vue-Komponenten |
+| `src/core/pdf` | Text extraction with positions, line/fixed-width reconstruction from x/y |
+| `src/core/formats` | Format plug-ins; `registry.ts` lists all formats |
+| `src/core/formats/legacy` | Parsers for the legacy layout (Revenue, JIB, AR) |
+| `src/core/calc` | Pure functions: amounts, month assignment, aggregation, validation |
+| `src/core/excel` | Export with ExcelJS (values only, no formulas) |
+| `src/worker` | Web Worker exposing `parse`, `buildReport`, `exportXlsx` via Comlink |
+| `src/ui` | Vue components |
 
-`src/core` hat keine Browser-/DOM-Abhängigkeiten und läuft auch unter Node.
-Beträge werden intern als ganzzahlige Hundertstel geführt.
+`src/core` has no browser/DOM dependencies and also runs under Node.
+Amounts are stored internally as integer hundredths.
 
-### Rechenregeln (Monatsblatt)
+### Calculation rules (month sheet)
 
-- Gas/Oil: Summe der Net-Zeilen je Bohrung, inkl. Korrekturen aus Vorperioden
-  („Revenue from Prior Statements“).
-- Lease Equip. = JIB-Abschnitte Equipment + Income (+ unbekannte Abschnitte),
+- Gas/Oil: sum of the net lines per well, including adjustments from prior
+  periods ("Revenue from Prior Statements").
+- Lease Equip. = JIB sections Equipment + Income (+ unknown sections),
   L.O.E. = Lease Operating Expenses + Intangible Drilling Costs.
-- Total Expen. = Lease Equip. + L.O.E. + Int. Drilling Cost, R.O.I. = Erlöse − Steuern − Kosten.
+- Total Expen. = Lease Equip. + L.O.E. + Int. Drilling Cost,
+  R.O.I. = income − taxes − expenses.
 
-### Prüfungen
+### Validation
 
-Gelesene Werte werden gegen die gedruckten Summen (Revenue-Totals, JIB-Abschnitts-
-und Rechnungssummen) und die AR-Rechnungen gegen die JIB abgeglichen. Abweichungen
-erscheinen als Hinweise in der App.
+Parsed values are checked against the printed totals (revenue totals, JIB section
+and invoice totals), and AR invoices are cross-checked against the JIB. Any
+differences are shown as issues in the app.
 
-### Legacy-Format entfernen
+### Removing the legacy format
 
-1. `src/core/formats/legacy/` löschen
-2. Import und Eintrag in `src/core/formats/registry.ts` entfernen
-3. `tests/unit/legacy-format.test.ts`, `tests/integration/legacy.test.ts` und `tests/fixtures/legacy/` löschen
+1. Delete `src/core/formats/legacy/`
+2. Remove its import and entry in `src/core/formats/registry.ts`
+3. Delete `tests/unit/legacy-format.test.ts`, `tests/integration/legacy.test.ts` and `tests/fixtures/legacy/`
 
-Ein Architekturtest stellt sicher, dass Formate nur über die Registry eingebunden werden.
+An architecture test ensures formats are only referenced through the registry.
 
-## Test-Fixtures
+## Test fixtures
 
-Echte Abrechnungen enthalten personenbezogene Daten und werden **nicht** eingecheckt
-(`.gitignore`). Für die Integrations- und E2E-Tests lokal ablegen:
+Real statements contain personal data and are **not** committed (`.gitignore`).
+For the integration and end-to-end tests, place them locally:
 
 ```
 tests/fixtures/legacy/input/YYYY-MM {REV,JIB,AR}.pdf
-tests/fixtures/legacy/expected.xlsx      # Referenz-Excel
-npm run fixtures:expected                # erzeugt expected.json (nur Codes + Zahlen)
+tests/fixtures/legacy/expected.xlsx      # reference workbook
+npm run fixtures:expected                # creates expected.json (codes and numbers only)
 ```
 
-Fehlen die Dateien, werden diese Tests übersprungen. Hilfsskripte:
-`npx tsx scripts/dump-pdf.ts <pdf>` (rekonstruierter Text),
-`npx tsx scripts/report-debug.ts` (Abweichungen gegen die Referenz).
+If these files are missing, those tests are skipped. Helper scripts:
+`npx tsx scripts/dump-pdf.ts <pdf>` (reconstructed text),
+`npx tsx scripts/report-debug.ts` (differences against the reference).

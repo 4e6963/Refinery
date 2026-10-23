@@ -9,7 +9,7 @@ const JANUARY = ['2025-01 REV.pdf', '2025-01 JIB.pdf', '2025-01 AR.pdf'].map(inp
 
 async function upload(page: Page, files: string[]) {
   await page.getByTestId('dropzone').locator('input[type=file]').setInputFiles(files)
-  await expect(page.getByTestId('file-list').getByText('✓ gelesen')).toHaveCount(files.length, { timeout: 60_000 })
+  await expect(page.getByTestId('file-list').getByText('✓ read')).toHaveCount(files.length, { timeout: 60_000 })
 }
 
 test('shows the empty start page', async ({ page }) => {
@@ -52,8 +52,8 @@ test.describe('with real fixtures', () => {
   test('lets the user correct the month of a file', async ({ page }) => {
     await page.goto('/')
     await upload(page, JANUARY.slice(0, 2))
-    await page.getByLabel('Monat für 2025-01 JIB.pdf').fill('2025-02')
-    await expect(page.getByTestId('warnings')).toContainText('JIB-Abrechnung fehlt')
+    await page.getByLabel('Month for 2025-01 JIB.pdf').fill('2025-02')
+    await expect(page.getByTestId('warnings')).toContainText('JIB statement missing')
     await expect(page.getByRole('tab', { name: /Feb/ })).toBeVisible()
   })
 
@@ -68,7 +68,7 @@ test.describe('with real fixtures', () => {
     await context.setOffline(true)
     await page.reload()
     await expect(page.getByRole('heading', { name: 'Refinery' })).toBeVisible()
-    await expect(page.getByText('offline verfügbar')).toBeVisible()
+    await expect(page.getByText('available offline')).toBeVisible()
     await upload(page, JANUARY.slice(0, 1))
     await context.setOffline(false)
   })

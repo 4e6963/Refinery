@@ -7,7 +7,7 @@ defineProps<{ warnings: Warning[] }>()
 
 <template>
   <section v-if="warnings.length" class="warnings" data-testid="warnings">
-    <h3>{{ warnings.length }} Hinweis{{ warnings.length === 1 ? '' : 'e' }} zur Prüfung</h3>
+    <h3>{{ warnings.length }} issue{{ warnings.length === 1 ? '' : 's' }} to review</h3>
     <ul>
       <li v-for="(w, i) in warnings" :key="i" :class="w.level">
         <strong v-if="w.month">{{ formatMonth(w.month) }}</strong>
@@ -16,7 +16,7 @@ defineProps<{ warnings: Warning[] }>()
       </li>
     </ul>
   </section>
-  <p v-else class="ok" data-testid="no-warnings">✓ Alle Summen und Rechnungen stimmen mit den Dokumenten überein.</p>
+  <p v-else class="ok" data-testid="no-warnings">✓ All totals and invoices match the documents.</p>
 </template>
 
 <style scoped>

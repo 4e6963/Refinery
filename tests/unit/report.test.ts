@@ -94,10 +94,10 @@ describe('report', () => {
       { ...files[1], fileName: 'nomonth.pdf', month: undefined, monthSource: undefined },
     ]).warnings.map((w) => [w.month, w.fileName, w.message])
     expect(warnings).toEqual([
-      ['2025-01', 'copy.pdf', 'Doppelte Abrechnung für 2025-01, bereits geladen: 2025-01 REV.pdf – ignoriert'],
-      [undefined, 'nomonth.pdf', 'Monat unbekannt – Datei wird nicht berücksichtigt'],
-      ['2025-03', '2025-03 REV.pdf', 'Keine Summenzeilen gefunden'],
-      ['2025-03', undefined, 'JIB-Abrechnung fehlt'],
+      ['2025-01', 'copy.pdf', 'Duplicate statement for 2025-01, already loaded: 2025-01 REV.pdf – ignored'],
+      [undefined, 'nomonth.pdf', 'Unknown month – file is ignored'],
+      ['2025-03', '2025-03 REV.pdf', 'No total lines found'],
+      ['2025-03', undefined, 'JIB statement missing'],
     ])
   })
 })

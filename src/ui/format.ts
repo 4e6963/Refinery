@@ -1,18 +1,18 @@
 import type { StatementKind } from '../core/model'
 
-const number = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const number = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 export function formatAmount(hundredths: number): string {
   return number.format(hundredths / 100)
 }
 
 export const KIND_LABELS: Record<StatementKind, string> = {
-  revenue: 'Erlöse (Revenue)',
-  expenses: 'Kosten (JIB)',
-  receivables: 'Forderungen (AR)',
+  revenue: 'Revenue',
+  expenses: 'Expenses (JIB)',
+  receivables: 'Receivables (AR)',
 }
 
-const monthNames = new Intl.DateTimeFormat('de-DE', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+const monthNames = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 export function formatMonth(month: string): string {
   const [y, m] = month.split('-').map(Number)

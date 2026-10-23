@@ -89,9 +89,9 @@ function clear() {
   <header class="top">
     <div>
       <h1>Refinery</h1>
-      <p class="sub">Abrechnungs-PDFs → Jahres-Excel · läuft vollständig im Browser</p>
+      <p class="sub">Statement PDFs → year-end Excel · runs entirely in your browser</p>
     </div>
-    <span v-if="offlineReady" class="badge" title="Die App funktioniert jetzt auch ohne Internet">offline verfügbar</span>
+    <span v-if="offlineReady" class="badge" title="The app now also works without an internet connection">available offline</span>
   </header>
 
   <main>
@@ -99,20 +99,20 @@ function clear() {
 
     <section v-if="entries.length" class="card">
       <div class="card-head">
-        <h2>Dateien ({{ entries.length }})</h2>
-        <button type="button" class="link" @click="clear">alle entfernen</button>
+        <h2>Files ({{ entries.length }})</h2>
+        <button type="button" class="link" @click="clear">remove all</button>
       </div>
       <ProgressBar
         v-if="pending.length"
         :value="progress"
-        :label="`${entries.length - pending.length} von ${entries.length} Dateien gelesen`"
+        :label="`${entries.length - pending.length} of ${entries.length} files read`"
       />
       <FileList :entries="entries" @month="setMonth" @remove="remove" />
     </section>
 
     <section v-if="report" class="card">
       <div class="card-head">
-        <h2>Ergebnis</h2>
+        <h2>Result</h2>
         <DownloadButton :report="report" :disabled="pending.length > 0 || building" />
       </div>
       <WarningList :warnings="report.warnings" />
