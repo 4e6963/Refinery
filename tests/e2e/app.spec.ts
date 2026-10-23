@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import ExcelJS from 'exceljs'
 import { expect, test, type Page } from '@playwright/test'
@@ -31,11 +32,21 @@ test.describe('with real fixtures', () => {
     const wb = new ExcelJS.Workbook()
     await wb.xlsx.readFile(await download.path())
     expect(wb.worksheets.map((w) => w.name)).toEqual(['01', 'Total'])
+    // Compare every well against the local reference values (not part of the repository).
+    const expected: Record<string, Record<string, number>> = JSON.parse(
+      await readFile(join(fixtureDir('legacy'), 'expected.json'), 'utf8'),
+    )['01']
     const sheet = wb.getWorksheet('01')!
-    const row = sheet.getRows(3, sheet.rowCount)!.find((r) => r.getCell('A').value === 100020000)!
-    expect(row.getCell('F').value).toBe(52.22)
-    expect(row.getCell('G').value).toBe(3838.45)
-    expect(row.getCell('J').value).toBe(441.94)
+    const differences: string[] = []
+    for (const [code, values] of Object.entries(expected)) {
+      const row = sheet.getRows(3, sheet.rowCount)!.find((r) => String(r.getCell('A').value) === code)
+      for (const col of ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']) {
+        const got = Number(row?.getCell(col).value ?? 0)
+        if (Math.abs(got - (values[col] ?? 0)) > 0.005) differences.push(`${code} ${col}`)
+      }
+    }
+    expect(Object.keys(expected).length).toBeGreaterThan(0)
+    expect(differences).toEqual([])
   })
 
   test('lets the user correct the month of a file', async ({ page }) => {
