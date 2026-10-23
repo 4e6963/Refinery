@@ -59,7 +59,12 @@ export function validateRevenue(statement: RevenueStatement): string[] {
       const parsed = deductions[description] ?? 0
       if (parsed !== printed) problems.push(mismatch(`${label} ${description}`, parsed, printed))
     }
+    const tax = sum(entries.map((e) => e.netTax))
+    if (control.netTax !== undefined && tax !== control.netTax) {
+      problems.push(mismatch(`${label} taxes`, tax, control.netTax))
+    }
   }
+  problems.push(...(statement.notes ?? []))
   return problems
 }
 
@@ -85,6 +90,12 @@ export function validateExpenses(statement: ExpenseStatement): string[] {
     if (sections !== invoice.netAmount) {
       problems.push(mismatch(`${where} invoice amount`, sections, invoice.netAmount))
     }
+  }
+  for (const [name, printed] of Object.entries(statement.sectionTotals ?? {})) {
+    const parsed = sum(
+      statement.invoices.flatMap((i) => i.sections.filter((s) => s.name === name).map((s) => s.totalShare ?? 0)),
+    )
+    if (parsed !== printed) problems.push(mismatch(`Total ${name}`, parsed, printed))
   }
   return problems
 }

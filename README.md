@@ -24,7 +24,8 @@ Pushes to `main` are deployed to GitHub Pages by `.github/workflows/deploy.yml`.
 | --- | --- |
 | `src/core/pdf` | Text extraction with positions, line/fixed-width reconstruction from x/y |
 | `src/core/formats` | Format plug-ins; `registry.ts` lists all formats |
-| `src/core/formats/legacy` | Parsers for the legacy layout (Revenue, JIB, AR) |
+| `src/core/formats/legacy` | Parsers for the legacy fixed-width layout (Revenue, JIB, AR) |
+| `src/core/formats/current` | Parsers for the current layout (check-style Revenue, JIB with summary table) |
 | `src/core/calc` | Pure functions: amounts, month assignment, aggregation, validation |
 | `src/core/excel` | Export with ExcelJS (values only, no formulas) |
 | `src/worker` | Web Worker exposing `parse`, `buildReport`, `exportXlsx` via Comlink |
@@ -44,17 +45,28 @@ Amounts are stored internally as integer hundredths.
 
 ### Validation
 
-Parsed values are checked against the printed totals (revenue totals, JIB section
-and invoice totals), and AR invoices are cross-checked against the JIB. Any
+Parsed values are checked against the totals printed in the documents (legacy:
+revenue totals, JIB section and invoice totals, AR invoices vs. JIB; current: check
+total for gross and taxes, JIB summary table per invoice and per section). Any
 differences are shown as issues in the app.
 
-### Removing the legacy format
+### Formats
+
+The format is detected per file, so statements of both layouts can be mixed.
+
+- **legacy**: fixed-width reports with letter-spaced titles; AR statements are used to cross-check the JIB.
+- **current**: products are mapped via the printed code legend (names containing *Oil*/*Condensate* → oil,
+  *Gas* → gas); other products are skipped with a warning. JIB netting lines in the revenue statement are
+  ignored because expenses come from the JIB itself. This layout has no AR statement.
+
+To remove a format, e.g. legacy:
 
 1. Delete `src/core/formats/legacy/`
 2. Remove its import and entry in `src/core/formats/registry.ts`
 3. Delete `tests/unit/legacy-format.test.ts`, `tests/integration/legacy.test.ts` and `tests/fixtures/legacy/`
+4. Remove the format from the list in `tests/unit/architecture.test.ts`
 
-An architecture test ensures formats are only referenced through the registry.
+An architecture test ensures formats are only referenced through the registry and do not depend on each other.
 
 ## Test fixtures
 
@@ -65,6 +77,7 @@ For the integration and end-to-end tests, place them locally:
 tests/fixtures/legacy/input/YYYY-MM {REV,JIB,AR}.pdf
 tests/fixtures/legacy/expected.xlsx      # reference workbook
 npm run fixtures:expected                # creates expected.json (codes and numbers only)
+tests/fixtures/current/input/YYYY-MM {REV,JIB}.pdf   # checked against printed control totals
 ```
 
 If these files are missing, those tests are skipped. Helper scripts:

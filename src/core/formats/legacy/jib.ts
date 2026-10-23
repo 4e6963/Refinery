@@ -1,11 +1,11 @@
 import type {
-  ExpenseCategory,
   ExpenseInvoice,
   ExpenseSection,
   ExpenseStatement,
 } from '../../model'
 import { parseHundredths } from '../../calc/money'
 import { addMonths, monthFromUsDate } from '../../calc/month'
+import { categorizeExpenseSection } from '../categories'
 import { AMOUNT, type LegacyText } from './text'
 
 const EXPENSES_THRU = /Expenses Thru:\s*(\d\d\/\d\d\/\d\d)/
@@ -17,14 +17,6 @@ const ITEM = new RegExp(String.raw`^(\s*\S.*?)\s+(${AMOUNT})\s+(${AMOUNT})$`)
 
 /** Invoices are issued two months after the expense period ends. */
 const STATEMENT_MONTH_OFFSET = 2
-
-function categorize(sectionName: string): ExpenseCategory {
-  if (sectionName.startsWith('LEASE OPERATING')) return 'operating'
-  if (sectionName.startsWith('LEASE & WELL EQUIPMENT')) return 'equipment'
-  if (sectionName.startsWith('INCOME')) return 'income'
-  if (sectionName.startsWith('INTANGIBLE DRILLING')) return 'drilling'
-  return 'other'
-}
 
 export function parseJib({ header, body }: LegacyText): ExpenseStatement {
   const statement: ExpenseStatement = { kind: 'expenses', invoices: [] }
@@ -63,7 +55,7 @@ export function parseJib({ header, body }: LegacyText): ExpenseStatement {
       if (/\(Continued\)/.test(line) && current?.name === name) {
         section = current
       } else {
-        section = { name, category: categorize(name), items: [] }
+        section = { name, category: categorizeExpenseSection(name), items: [] }
         invoice.sections.push(section)
       }
       continue

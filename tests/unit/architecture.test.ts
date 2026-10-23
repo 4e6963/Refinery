@@ -19,7 +19,15 @@ describe('architecture', () => {
     )
     expect(offenders).toEqual([])
     const registryImports = readFileSync('src/core/formats/registry.ts', 'utf8').match(/from '\.\/[^']+'/g)
-    expect(registryImports).toEqual(["from './types'", "from './legacy'"])
+    expect(registryImports).toEqual(["from './types'", "from './legacy'", "from './current'"])
+    // Formats must not depend on each other, so each can be removed on its own.
+    for (const format of ['legacy', 'current']) {
+      const other = format === 'legacy' ? 'current' : 'legacy'
+      const offending = source.filter(
+        (f) => f.startsWith(`src/core/formats/${format}/`) && readFileSync(f, 'utf8').includes(`/${other}`),
+      )
+      expect(offending).toEqual([])
+    }
   })
 
   it('keeps core free of browser APIs', () => {

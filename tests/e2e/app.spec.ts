@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import ExcelJS from 'exceljs'
 import { strToU8, zipSync } from 'fflate'
@@ -96,5 +96,22 @@ test.describe('with real fixtures', () => {
     await expect(page.getByText('available offline')).toBeVisible()
     await upload(page, JANUARY.slice(0, 1))
     await context.setOffline(false)
+  })
+})
+
+test.describe('with real fixtures in the current format', () => {
+  test.skip(!hasFixtures('current', false), 'real statements are not part of the repository')
+
+  test('reads all files and downloads the workbook', async ({ page }) => {
+    const dir = join(fixtureDir('current'), 'input')
+    const files = (await readdir(dir)).filter((f) => f.endsWith('.pdf')).map((f) => join(dir, f))
+    await page.goto('/')
+    await upload(page, files)
+    await expect(page.getByTestId('file-list').getByRole('cell', { name: 'current', exact: true })).toHaveCount(files.length)
+    await expect(page.getByTestId('no-warnings')).toBeVisible()
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByTestId('download').click()])
+    const wb = new ExcelJS.Workbook()
+    await wb.xlsx.readFile(await download.path())
+    expect(wb.worksheets.length).toBe(new Set(files.map((f) => basename(f).slice(0, 7))).size + 1)
   })
 })

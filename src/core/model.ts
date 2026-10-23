@@ -30,6 +30,8 @@ export interface RevenueControl {
   netValue?: number
   /** Net amounts per tax/deduction description, e.g. "GAS TAX". */
   deductions: Record<string, number>
+  /** Total net tax over all products, for formats that only print the sum. */
+  netTax?: number
   productNetVolume: Partial<Record<Product, number>>
 }
 
@@ -38,6 +40,8 @@ export interface RevenueStatement {
   statementMonth?: YearMonth
   entries: RevenueEntry[]
   controls: RevenueControl[]
+  /** Lines the parser could not map (e.g. unknown products); shown as warnings. */
+  notes?: string[]
 }
 
 export type ExpenseCategory = 'operating' | 'equipment' | 'income' | 'drilling' | 'other'
@@ -68,6 +72,8 @@ export interface ExpenseStatement {
   kind: 'expenses'
   statementMonth?: YearMonth
   invoices: ExpenseInvoice[]
+  /** Printed net totals per section name over all invoices, if the format has them. */
+  sectionTotals?: Record<string, number>
 }
 
 export interface ReceivableInvoice {

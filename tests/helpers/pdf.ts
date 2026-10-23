@@ -8,8 +8,9 @@ import type { ParsedFile } from '../../src/core/model'
 export const fixtureDir = (format: string) => join('tests', 'fixtures', format)
 
 /** Real statements are kept out of git; integration tests skip when they are missing. */
-export function hasFixtures(format: string): boolean {
-  return existsSync(join(fixtureDir(format), 'input')) && existsSync(join(fixtureDir(format), 'expected.json'))
+export function hasFixtures(format: string, withExpected = true): boolean {
+  const dir = fixtureDir(format)
+  return existsSync(join(dir, 'input')) && (!withExpected || existsSync(join(dir, 'expected.json')))
 }
 
 export async function parseFixture(path: string): Promise<ParsedFile> {

@@ -18,7 +18,7 @@ export function monthFromFileName(fileName: string): YearMonth | undefined {
 
 /** `MM/DD/YY` → `YYYY-MM` (two-digit years are 20xx). */
 export function monthFromUsDate(date: string): YearMonth | undefined {
-  const match = date.match(/(\d{1,2})\/\d{1,2}\/(\d{2}|\d{4})/)
+  const match = date.match(/(\d{1,2})\/\d{1,2}\/(\d{4}|\d{2})\b/)
   if (!match) return undefined
   const year = match[2].length === 2 ? 2000 + Number(match[2]) : Number(match[2])
   return yearMonth(year, Number(match[1]))
