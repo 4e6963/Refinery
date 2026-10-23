@@ -1,0 +1,13 @@
+/examples
+node_modules/
+dist/
+dev-dist/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+
+# Real statements contain personal data and must never be committed.
+/tests/fixtures/*/input/
+/tests/fixtures/*/expected.xlsx
+/tests/fixtures/*/expected.json
