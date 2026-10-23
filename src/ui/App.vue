@@ -165,7 +165,8 @@ function clear() {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 1.4rem 1.5rem;
+  /* logo and padding scale with the header so the sky is not left empty on wide screens */
+  padding: clamp(1.4rem, 2.6vw, 3.5rem) clamp(1.5rem, 3vw, 4rem);
   overflow: hidden;
   color: #fffaf0;
   border-bottom: 4px solid var(--crude);
@@ -179,7 +180,7 @@ function clear() {
 /* branded into the sky like a ranch sign: crude brown by day, amber by night */
 h1 {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2rem, 4.2vw, 6.5rem);
   line-height: 1;
   color: var(--crude);
   text-shadow: 0 2px 0 rgb(255 214 150 / 55%);
@@ -187,7 +188,7 @@ h1 {
 .sub {
   margin: 0.35rem 0 0;
   font-style: italic;
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.35vw, 2rem);
   font-weight: 500;
   color: #4a2a17;
 }
