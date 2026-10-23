@@ -1,38 +1,78 @@
+@import '@fontsource/rye/latin-400.css';
+@import '@fontsource-variable/bitter/wght.css';
+
 :root {
-  --accent: #1f4e5f;
-  --accent-soft: #e6f0f3;
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #eef1f4;
-  --border: #dde2e7;
-  --border-strong: #b7c1ca;
-  --text: #1c2329;
-  --muted: #5d6973;
-  --danger: #b3261e;
-  --ok: #1e7b45;
+  /* West Texas at sundown */
+  --crude: #1d1712;
+  --leather: #8a4b22;
+  --saddle: #b5652b;
+  --sunset: #e8772e;
+  --ember: #f2a541;
+  --sand: #f6ead3;
+  --dust: #efe0c3;
+  --sage: #5f7f5c;
+
+  --accent: var(--leather);
+  --accent-strong: #6e3816;
+  --accent-soft: #f3dcc0;
+  --bg: var(--sand);
+  --surface: #fffaf1;
+  --surface-2: #f3e5cb;
+  --border: #e2cfac;
+  --border-strong: #c9a774;
+  --text: #2b2018;
+  --muted: #7a6450;
+  --danger: #b0301f;
+  --ok: #3f7a3a;
   --warn: #c98a12;
-  --warn-soft: #fff7e6;
+  --warn-soft: #fff1d3;
+  --oil: #17110d;
+
+  --sky-top: #f6b25b;
+  --sky-mid: #ef8a3c;
+  --sky-low: #f7d39a;
+  --sun: #fff3c4;
+  --mesa-far: #c7764a;
+  --mesa-near: #9a4f2c;
+  --ground: #6b3a1f;
+  --silhouette: #2a1a12;
+
+  --display: 'Rye', 'Georgia', serif;
+  --slab: 'Bitter Variable', 'Rockwell', 'Georgia', serif;
+
   color-scheme: light dark;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--slab);
   line-height: 1.45;
   color: var(--text);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --accent: #3f8ea8;
-    --accent-soft: #17323b;
-    --bg: #121619;
-    --surface: #1a2024;
-    --surface-2: #232b30;
-    --border: #2f383e;
-    --border-strong: #4a565e;
-    --text: #e4e9ec;
-    --muted: #98a4ad;
-    --danger: #f2827a;
-    --ok: #6fcf97;
-    --warn: #e0b04a;
-    --warn-soft: #2b2416;
+    --accent: #e08a45;
+    --accent-strong: #f2a541;
+    --accent-soft: #3a2618;
+    --bg: #15100c;
+    --surface: #1f1813;
+    --surface-2: #2a2019;
+    --border: #3b2e24;
+    --border-strong: #5a4636;
+    --text: #f1e4cf;
+    --muted: #b49c82;
+    --danger: #f08470;
+    --ok: #8fcf88;
+    --warn: #e7b04e;
+    --warn-soft: #2d2213;
+    --oil: #000;
+
+    --sky-top: #0d1430;
+    --sky-mid: #27224a;
+    --sky-low: #6b3b45;
+    --sun: #f4f1e3;
+    --mesa-far: #3a2433;
+    --mesa-near: #2a1824;
+    --ground: #1a110d;
+    --silhouette: #0b0706;
+    --dust: #5c4a3a;
   }
 }
 
@@ -42,5 +82,35 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    repeating-linear-gradient(115deg, transparent 0 22px, rgb(138 75 34 / 4%) 22px 23px),
+    var(--bg);
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sunset);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

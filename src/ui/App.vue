@@ -7,6 +7,8 @@ import ProgressBar from './ProgressBar.vue'
 import ResultPreview from './ResultPreview.vue'
 import WarningList from './WarningList.vue'
 import DownloadButton from './DownloadButton.vue'
+import HeroScene from './HeroScene.vue'
+import { ICONS } from './icons'
 import type { FileEntry } from './types'
 import { Comlink, worker } from './workerClient'
 import { offlineReady } from './pwa'
@@ -110,11 +112,13 @@ function clear() {
 
 <template>
   <header class="top">
-    <div>
-      <h1>Refinery</h1>
-      <p class="sub">Statement PDFs → year-end Excel · runs entirely in your browser</p>
+    <HeroScene />
+    <div class="brand">
+      <div>
+        <h1>Refinery</h1>
+        <p class="sub">Crude statements in, refined spreadsheets out</p>
+      </div>
     </div>
-    <span v-if="offlineReady" class="badge" title="The app now also works without an internet connection">available offline</span>
   </header>
 
   <main>
@@ -123,8 +127,8 @@ function clear() {
 
     <section v-if="entries.length" class="card">
       <div class="card-head">
-        <h2>Files ({{ entries.length }})</h2>
-        <button type="button" class="link" @click="clear">remove all</button>
+        <h2><span class="num">{{ entries.length }}</span> barrels in the tank</h2>
+        <button type="button" class="link" @click="clear">empty the tank</button>
       </div>
       <ProgressBar
         v-if="pending.length"
@@ -136,43 +140,88 @@ function clear() {
 
     <section v-if="report" class="card">
       <div class="card-head">
-        <h2>Result</h2>
+        <h2>Refined yield</h2>
         <DownloadButton :report="report" :disabled="pending.length > 0 || building" />
       </div>
       <WarningList :warnings="report.warnings" />
       <ResultPreview :report="report" />
     </section>
   </main>
+
+  <footer>
+    <span>Refined right here in your browser — not a single drop leaves the ranch.</span>
+    <span v-if="offlineReady" class="badge" title="The app now also works without an internet connection">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="ICONS.star" /></svg>available offline
+    </span>
+  </footer>
 </template>
 
 <style scoped>
 .top {
+  position: relative;
+  /* The scene covers the full width; growing with it keeps the tallest parts
+     (derrick, flare) inside the header on wide screens. */
+  min-height: max(210px, 17vw);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  background: var(--accent);
-  color: #fff;
+  align-items: flex-start;
+  padding: 1.4rem 1.5rem;
+  overflow: hidden;
+  color: #fffaf0;
+  border-bottom: 4px solid var(--crude);
 }
+.brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+/* branded into the sky like a ranch sign: crude brown by day, amber by night */
 h1 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+  color: var(--crude);
+  text-shadow: 0 2px 0 rgb(255 214 150 / 55%);
 }
 .sub {
-  margin: 0.1rem 0 0;
-  opacity: 0.85;
-  font-size: 0.9rem;
+  margin: 0.35rem 0 0;
+  font-style: italic;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4a2a17;
+}
+@media (prefers-color-scheme: dark) {
+  h1 {
+    color: var(--ember);
+    text-shadow: 0 0 18px rgb(242 165 65 / 35%);
+  }
+  .sub {
+    color: #e9c9a0;
+  }
 }
 .badge {
-  font-size: 0.75rem;
-  border: 1px solid rgb(255 255 255 / 60%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-style: normal;
+  color: var(--accent-strong);
+  border: 1px solid var(--border-strong);
   border-radius: 999px;
-  padding: 0.15rem 0.6rem;
+  padding: 0.2rem 0.7rem 0.2rem 0.45rem;
+}
+.badge svg {
+  width: 1rem;
+  height: 1rem;
+  fill: var(--ember);
 }
 main {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
+  margin: -1.5rem auto 0;
+  padding: 0 1rem 2rem;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -180,12 +229,21 @@ main {
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem;
+  border-radius: 14px;
+  padding: 1.1rem 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.8rem;
   min-width: 0;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 40%) inset,
+    0 10px 24px -14px rgb(60 30 10 / 45%);
+  /* riveted steel-plate corners */
+  background-image:
+    radial-gradient(circle at 12px 12px, var(--border-strong) 2.5px, transparent 3px),
+    radial-gradient(circle at calc(100% - 12px) 12px, var(--border-strong) 2.5px, transparent 3px),
+    radial-gradient(circle at 12px calc(100% - 12px), var(--border-strong) 2.5px, transparent 3px),
+    radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), var(--border-strong) 2.5px, transparent 3px);
 }
 .card-head {
   display: flex;
@@ -193,14 +251,21 @@ main {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  padding: 0 0.4rem;
 }
 h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.35rem;
+  color: var(--accent-strong);
+}
+.num {
+  font-family: var(--slab);
+  font-weight: 700;
 }
 .archive-error {
   margin: -0.5rem 0 0;
   color: var(--danger);
+  font-weight: 600;
 }
 .link {
   border: none;
@@ -208,9 +273,18 @@ h2 {
   color: var(--accent);
   cursor: pointer;
   font: inherit;
+  text-decoration: underline dotted;
 }
-.card :deep(table.files) {
-  display: block;
-  overflow-x: auto;
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: center;
+  padding: 1.5rem 1rem 2rem;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.9rem;
 }
 </style>

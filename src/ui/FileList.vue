@@ -17,7 +17,17 @@ const SOURCE_LABEL = { filename: 'from file name', content: 'from content', manu
 </script>
 
 <template>
+  <div class="scroll">
   <table class="files" data-testid="file-list">
+    <!-- Fixed column widths, so the table does not jump while statuses change during import. -->
+    <colgroup>
+      <col class="c-file" />
+      <col class="c-type" />
+      <col class="c-format" />
+      <col class="c-month" />
+      <col class="c-status" />
+      <col class="c-remove" />
+    </colgroup>
     <thead>
       <tr>
         <th>File</th>
@@ -59,13 +69,37 @@ const SOURCE_LABEL = { filename: 'from file name', content: 'from content', manu
       </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <style scoped>
+.scroll {
+  overflow-x: auto;
+}
 .files {
   width: 100%;
+  min-width: 840px;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.9rem;
+}
+.c-file {
+  width: 25%;
+}
+.c-type {
+  width: 150px;
+}
+.c-format {
+  width: 90px;
+}
+.c-month {
+  width: 300px;
+}
+.c-status {
+  width: 17%;
+}
+.c-remove {
+  width: 2.5rem;
 }
 th,
 td {
@@ -73,10 +107,21 @@ td {
   border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.status {
+  font-variant-numeric: tabular-nums;
 }
 th {
   color: var(--muted);
   font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+tr.reading td {
+  background: var(--accent-soft);
 }
 .name {
   max-width: 18rem;

@@ -15,8 +15,8 @@ export default defineConfig({
         short_name: 'Refinery',
         description: 'Reads statement PDFs in your browser and creates a year-end Excel workbook. All data stays on your device.',
         lang: 'en',
-        theme_color: '#1f4e5f',
-        background_color: '#f6f7f9',
+        theme_color: '#8a4b22',
+        background_color: '#f6ead3',
         display: 'standalone',
         start_url: './',
         scope: './',
@@ -27,7 +27,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,mjs,css,html,svg,png,webmanifest}'],
+        globPatterns: ['**/*.{js,mjs,css,html,svg,png,woff2,webmanifest}'],
         // pdf.js and ExcelJS are large; they must be precached for offline use.
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
         navigateFallback: 'index.html',

@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import type { Report, RowValues, SheetReport, WellRow } from '../core/model'
 import { formatAmount, formatMonth } from './format'
+import { ICONS } from './icons'
 
 const props = defineProps<{ report: Report }>()
 
@@ -55,7 +56,8 @@ function cell(row: WellRow, c: (typeof COLUMNS)[number]): string {
         >
           {{ formatMonth(m.month) }}
         </button>
-        <button role="tab" type="button" :aria-selected="tab === 'total'" @click="tab = 'total'">
+        <button role="tab" type="button" class="total-tab" :aria-selected="tab === 'total'" @click="tab = 'total'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="ICONS.star" /></svg>
           Total {{ report.year ?? '' }}
         </button>
       </div>
@@ -108,19 +110,49 @@ function cell(row: WellRow, c: (typeof COLUMNS)[number]): string {
   flex-wrap: wrap;
   gap: 0.25rem;
 }
+/* leather luggage tags */
 .tabs button {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: 6px;
-  padding: 0.25rem 0.6rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  border-radius: 4px 12px 12px 4px;
+  padding: 0.25rem 0.75rem 0.25rem 1.1rem;
   cursor: pointer;
   font: inherit;
   font-size: 0.85rem;
+  color: var(--text);
+  transition: background 0.15s;
+}
+.tabs button::before {
+  content: '';
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  width: 0.32rem;
+  height: 0.32rem;
+  margin-top: -0.16rem;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+.tabs button:hover {
+  background: var(--accent-soft);
 }
 .tabs button[aria-selected='true'] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: linear-gradient(180deg, var(--saddle), var(--leather));
+  border-color: var(--accent-strong);
+  color: #fffaf0;
+}
+.total-tab {
+  font-weight: 700;
+}
+.total-tab svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: var(--ember);
 }
 .filter {
   font-size: 0.85rem;
@@ -129,32 +161,60 @@ function cell(row: WellRow, c: (typeof COLUMNS)[number]): string {
 .scroll {
   overflow: auto;
   max-height: 60vh;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 2px solid var(--border-strong);
+  border-radius: 10px;
 }
+/* The slab serif is too wide for twelve number columns; use the compact UI font. */
 table {
   border-collapse: collapse;
   width: 100%;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   font-size: 0.82rem;
   font-variant-numeric: tabular-nums;
 }
 th,
 td {
-  padding: 0.3rem 0.5rem;
+  padding: 0.3rem 0.45rem;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 thead th {
+  white-space: normal;
+  vertical-align: bottom;
+}
+@media (max-width: 1150px) {
+  table {
+    font-size: 0.76rem;
+  }
+  th,
+  td {
+    padding: 0.28rem 0.3rem;
+  }
+  .name {
+    max-width: 9rem;
+  }
+}
+thead th {
   position: sticky;
   top: 0;
-  background: var(--surface-2);
+  background: var(--crude);
+  color: var(--ember);
   text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+tbody tr:nth-child(even) {
+  background: rgb(181 101 43 / 5%);
+}
+tbody tr:hover {
+  background: var(--accent-soft);
 }
 tfoot td {
   position: sticky;
   bottom: 0;
   background: var(--surface-2);
-  font-weight: 600;
+  border-top: 2px solid var(--leather);
+  font-weight: 700;
 }
 .num {
   text-align: right;
@@ -163,7 +223,7 @@ tfoot td {
   color: var(--danger);
 }
 .name {
-  max-width: 16rem;
+  max-width: 14rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }

@@ -1,6 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#1f4e5f"/>
-  <path d="M32 10c-7 10-14 18-14 27a14 14 0 0 0 28 0c0-9-7-17-14-27z" fill="#f2c14e"/>
-  <rect x="24" y="36" width="16" height="3" rx="1.5" fill="#1f4e5f"/>
-  <rect x="24" y="42" width="16" height="3" rx="1.5" fill="#1f4e5f"/>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6b25b"/>
+      <stop offset="1" stop-color="#e8772e"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#sky)"/>
+  <circle cx="44" cy="38" r="13" fill="#fff3c4"/>
+  <rect y="50" width="64" height="14" fill="#6b3a1f"/>
+  <g fill="#1d1712">
+    <path d="M20 52 L28 27 L36 52Z"/>
+    <rect x="8" y="50" width="48" height="3" rx="1"/>
+    <g transform="rotate(-10 28 27)">
+      <rect x="8" y="24" width="40" height="5" rx="2"/>
+      <path d="M8 21 Q2 26 8 34 L11 34 L11 22Z"/>
+      <rect x="40" y="26" width="10" height="9" rx="2"/>
+      <path d="M2.5 13 C4 14.5 7 15 9 15 S14 14.5 15.5 13 C14.8 13 14 13.3 13.5 13.3 C13.3 11.6 12.8 9 12 8.2 C11.2 7.4 10 8 9 8.7 C8 8 6.8 7.4 6 8.2 C5.2 9 4.7 11.6 4.5 13.3 C4 13.3 3.2 13 2.5 13Z"/>
+    </g>
+    <path d="M7 34 L7 50" stroke="#1d1712" stroke-width="1.5"/>
+  </g>
 </svg>
