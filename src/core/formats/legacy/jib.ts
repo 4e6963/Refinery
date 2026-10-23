@@ -11,9 +11,9 @@ import { AMOUNT, type LegacyText } from './text'
 const EXPENSES_THRU = /Expenses Thru:\s*(\d\d\/\d\d\/\d\d)/
 const WELL = /Well Code: (\d+) (.*?)\s+Inv#: (\d+)/
 const SECTION = /^\*\*\* (.+?)\s*\*\*\*/
-const TOTAL = new RegExp(String.raw`^\s+Total:\s+(${AMOUNT})\s+(${AMOUNT})$`)
+const TOTAL = new RegExp(String.raw`^\s+Total:\s*(${AMOUNT})\s*(${AMOUNT})$`)
 const NET_INVOICE = new RegExp(String.raw`Net Invoice# (\d+) Amount for .*?(${AMOUNT})\*\*`)
-const ITEM = new RegExp(String.raw`^(\s*\S.*?)\s+(${AMOUNT})\s+(${AMOUNT})$`)
+const ITEM = new RegExp(String.raw`^(\s*\S.*?)\s*(${AMOUNT})\s*(${AMOUNT})$`)
 
 /** Invoices are issued two months after the expense period ends. */
 const STATEMENT_MONTH_OFFSET = 2

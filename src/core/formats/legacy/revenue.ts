@@ -14,22 +14,22 @@ const SECTION_CURRENT = /-New Revenue This Statement-/
 const SECTION_PRIOR = /-Revenue from Prior Statements-/
 const STATEMENT_DATE = /Date:\s*(\d\d\/\d\d\/\d\d)/
 const PRODUCT_LINE = new RegExp(
-  String.raw`^\s*[A-Z]\s+(\d\d/\d\d)\s+${AMOUNT}\s+[\d.]+\s+${NUMBER}\s+${AMOUNT}(?:\s+(.*?)\s+(${AMOUNT}))?`,
+  String.raw`^\s*[A-Z]\s+(\d\d/\d\d)\s*${AMOUNT}\s+[\d.]+\s+${NUMBER}\s*${AMOUNT}(?:\s*(.*?)\s*(${AMOUNT}))?`,
 )
 const NET_LINE = new RegExp(
-  String.raw`^([A-Z]{3})\s+\w+\s+(${NUMBER})\s+(${AMOUNT})\s+\(Net\)(?:\s+(${AMOUNT}))?`,
+  String.raw`^([A-Z]{3})\s+\w+\s+(${NUMBER})\s*(${AMOUNT})\s+\(Net\)(?:\s*(${AMOUNT}))?`,
 )
-const DEDUCTION_LINE = new RegExp(String.raw`^\s+([A-Z][A-Z ]*[A-Z])\s+(${AMOUNT})(\s|$)`)
-const DEDUCTION_NET_LINE = new RegExp(String.raw`^\s+\(Net\)\s+(${AMOUNT})`)
+const DEDUCTION_LINE = new RegExp(String.raw`^\s+([A-Z][A-Z ]*[A-Z])\s*(${AMOUNT})(\s|$)`)
+const DEDUCTION_NET_LINE = new RegExp(String.raw`^\s+\(Net\)\s*(${AMOUNT})`)
 const WELL_TOTALS = /Totals:/
 const CONTROL_TOTALS = /^(New|Prior|Overall) Revenue Totals:/
 const CONTROL_NET = new RegExp(
-  String.raw`^\s+NET\s+(${NUMBER})\s+(${AMOUNT})\s+\(Net\)\s+(${AMOUNT})`,
+  String.raw`^\s+NET\s+(${NUMBER})\s*(${AMOUNT})\s+\(Net\)\s*(${AMOUNT})`,
 )
 const CONTROL_DESCRIPTION = new RegExp(
-  String.raw`(?:^\s+|${AMOUNT} )([A-Z][A-Z ]*[A-Z])\s+(${AMOUNT})`,
+  String.raw`(?:^\s+|${AMOUNT} )([A-Z][A-Z ]*[A-Z])\s*(${AMOUNT})`,
 )
-const CONTROL_DEDUCTION_NET = new RegExp(String.raw`\(Net\)\s+(${AMOUNT})`)
+const CONTROL_DEDUCTION_NET = new RegExp(String.raw`\(Net\)\s*(${AMOUNT})`)
 const CONTROL_PRODUCT = new RegExp(String.raw`^\s+(OIL|GAS) 8/8\s+${NUMBER}`)
 const CONTROL_PRODUCT_NET = new RegExp(String.raw`^\s+NET\s+(${NUMBER})$`)
 

@@ -52,7 +52,8 @@ const REV_PAGE_2 = [
   '                                                         OIL PROD TAX     $96.00        $0.00',
   '                                                         (Net)             $9.60        $0.00      $208.90        $0.00        $0.00',
   '*** Well: 900000002 TEST LEASE B,SAMPLE County,TX  API#:N/A ***',
-  ' O   01/25 $70.00 0.0500000000        10.00      $700.00 OIL PROD TAX     $32.00        $0.00',
+  // Prices of $100 and more fill the column, so month and price touch.
+  ' O   01/25$100.00 0.0500000000        10.00$1,000,000.00 OIL PROD TAX     $32.00        $0.00',
   'OIL                WI                  0.50       $35.00 (Net)             $1.60        $0.00       $33.40        $0.00        $0.00',
   '--------------------Revenue from Prior Statements--------------------',
   '*** Well: 900000002 TEST LEASE B,SAMPLE County,TX  API#:N/A ***',

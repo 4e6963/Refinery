@@ -7,9 +7,9 @@ const STATEMENT_DATE = /Date:\s*(\d\d\/\d\d\/\d\d)/
 const NEW_INVOICES = /-New Invoices This Statement-/
 const PREVIOUS_INVOICES = /-Invoices From Previous Statements-/
 const INVOICE = new RegExp(
-  String.raw`^\s*(\d{7})\s+(\d{9})\s+\d\d/\d\d/\d\d\s+(.*?)\s+JIB(?:\s+(${AMOUNT}))?$`,
+  String.raw`^\s*(\d{7})\s+(\d{9})\s+\d\d/\d\d/\d\d\s+(.*?)\s+JIB(?:\s*(${AMOUNT}))?$`,
 )
-const BALANCE_DUE = new RegExp(String.raw`Balance Due This Statement\s+(${AMOUNT})`)
+const BALANCE_DUE = new RegExp(String.raw`Balance Due This Statement\s*(${AMOUNT})`)
 
 export function parseAr({ header, body }: LegacyText): ReceivableStatement {
   const statement: ReceivableStatement = { kind: 'receivables', invoices: [] }

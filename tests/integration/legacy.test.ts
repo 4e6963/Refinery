@@ -55,7 +55,8 @@ describe.skipIf(!hasFixtures('legacy'))('legacy statements (real fixtures)', () 
     const differences: string[] = []
     let adjusted = 0
     for (const [sheet, wells] of Object.entries(expected)) {
-      const month = report.months.find((m) => m.month.endsWith(`-${sheet}`))
+      // The reference workbook covers one year; further fixtures are only checked for warnings.
+      const month = report.months.find((m) => m.month === `${report.year}-${sheet}`)
       expect(month, `month ${sheet}`).toBeDefined()
       const revenue = files.find((f) => f.month === month!.month && f.kind === 'revenue')
       const entries = revenue?.statement?.kind === 'revenue' ? revenue.statement.entries : []
