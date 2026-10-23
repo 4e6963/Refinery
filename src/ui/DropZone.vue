@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { isPdf, isZip } from '../core/fileTypes'
 
 const emit = defineEmits<{ files: [files: File[]] }>()
 const dragging = ref(false)
 const input = ref<HTMLInputElement>()
 
 function accept(list: FileList | null | undefined) {
-  const files = [...(list ?? [])].filter(
-    (f) => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'),
-  )
+  const files = [...(list ?? [])].filter((f) => isPdf(f.name) || isZip(f.name))
   if (files.length) emit('files', files)
 }
 
@@ -32,8 +31,8 @@ function onChange() {
     @dragleave.prevent="dragging = false"
     @drop.prevent="onDrop"
   >
-    <input ref="input" type="file" accept="application/pdf,.pdf" multiple hidden @change="onChange" />
-    <span class="title">Drop PDFs here or click to select</span>
+    <input ref="input" type="file" accept="application/pdf,.pdf,application/zip,.zip" multiple hidden @change="onChange" />
+    <span class="title">Drop PDFs or ZIP archives here or click to select</span>
     <span class="hint">Revenue, JIB and AR statements, any number of months. Files never leave your device.</span>
   </label>
 </template>

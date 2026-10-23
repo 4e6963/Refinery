@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import ExcelJS from 'exceljs'
+import { strToU8, zipSync } from 'fflate'
 import { expect, test, type Page } from '@playwright/test'
 import { fixtureDir, hasFixtures } from '../helpers/pdf'
 
@@ -18,8 +19,32 @@ test('shows the empty start page', async ({ page }) => {
   await expect(page.getByTestId('dropzone')).toBeVisible()
 })
 
+test('reports ZIP archives without PDFs', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('dropzone').locator('input[type=file]').setInputFiles({
+    name: 'empty.zip',
+    mimeType: 'application/zip',
+    buffer: Buffer.from(zipSync({ 'notes.txt': strToU8('no statements here') })),
+  })
+  await expect(page.getByTestId('archive-error')).toHaveText('empty.zip: no PDF files found')
+})
+
 test.describe('with real fixtures', () => {
   test.skip(!hasFixtures('legacy'), 'real statements are not part of the repository')
+
+  test('reads PDFs from a ZIP archive', async ({ page }) => {
+    const files: Record<string, Uint8Array> = {}
+    for (const path of JANUARY) files[`statements/${basename(path)}`] = new Uint8Array(await readFile(path))
+    await page.goto('/')
+    await page.getByTestId('dropzone').locator('input[type=file]').setInputFiles({
+      name: 'january.zip',
+      mimeType: 'application/zip',
+      buffer: Buffer.from(zipSync(files)),
+    })
+    await expect(page.getByTestId('file-list').getByText('✓ read')).toHaveCount(3, { timeout: 60_000 })
+    await expect(page.getByTestId('file-list').getByText('january.zip')).toHaveCount(3)
+    await expect(page.getByTestId('no-warnings')).toBeVisible()
+  })
 
   test('reads a month and downloads the workbook', async ({ page }) => {
     await page.goto('/')

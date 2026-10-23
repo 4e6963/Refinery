@@ -10,6 +10,7 @@ import DownloadButton from './DownloadButton.vue'
 import type { FileEntry } from './types'
 import { Comlink, worker } from './workerClient'
 import { offlineReady } from './pwa'
+import { isPdf, isZip } from '../core/fileTypes'
 
 const entries = ref<FileEntry[]>([])
 const report = shallowRef<Report>()
@@ -26,11 +27,33 @@ const progress = computed(() => {
   return (done + current) / total
 })
 
-function addFiles(files: File[]) {
+const archiveErrors = ref<string[]>([])
+
+async function addFiles(files: File[]) {
+  archiveErrors.value = []
+  addPdfs(files.filter((f) => isPdf(f.name)))
+  for (const zip of files.filter((f) => isZip(f.name))) {
+    try {
+      const data = await zip.arrayBuffer()
+      const pdfs = await worker().unzip(Comlink.transfer(data, [data]))
+      if (!pdfs.length) archiveErrors.value.push(`${zip.name}: no PDF files found`)
+      addPdfs(
+        pdfs.map((p) => new File([p.data as BlobPart], p.name, { type: 'application/pdf' })),
+        zip.name,
+      )
+    } catch (err) {
+      archiveErrors.value.push(`${zip.name}: ${err instanceof Error ? err.message : String(err)}`)
+    }
+  }
+}
+
+function addPdfs(files: File[], archive?: string) {
+  if (!files.length) return
   const known = new Set(entries.value.map((e) => `${e.file.name}:${e.file.size}`))
   for (const file of files) {
     if (known.has(`${file.name}:${file.size}`)) continue
-    const entry = reactive<FileEntry>({ id: nextId++, file, status: 'queued', progress: 0 })
+    known.add(`${file.name}:${file.size}`)
+    const entry = reactive<FileEntry>({ id: nextId++, file, archive, status: 'queued', progress: 0 })
     entries.value.push(entry)
     queue = queue.then(() => read(entry))
   }
@@ -96,6 +119,7 @@ function clear() {
 
   <main>
     <DropZone @files="addFiles" />
+    <p v-for="(msg, i) in archiveErrors" :key="i" class="archive-error" data-testid="archive-error">{{ msg }}</p>
 
     <section v-if="entries.length" class="card">
       <div class="card-head">
@@ -173,6 +197,10 @@ main {
 h2 {
   margin: 0;
   font-size: 1.1rem;
+}
+.archive-error {
+  margin: -0.5rem 0 0;
+  color: var(--danger);
 }
 .link {
   border: none;

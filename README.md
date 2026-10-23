@@ -2,7 +2,8 @@
 
 Browser app (PWA, works offline, no backend) that reads monthly statement PDFs
 (Revenue, Joint Interest Billing, Accounts Receivable), validates them and
-exports a year-end Excel workbook (`.xlsx`). All data stays in the browser.
+exports a year-end Excel workbook (`.xlsx`). PDFs can be dropped individually or
+as ZIP archives (folders and nested archives are supported). All data stays in the browser.
 
 ## Development
 

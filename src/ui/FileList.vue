@@ -30,7 +30,9 @@ const SOURCE_LABEL = { filename: 'from file name', content: 'from content', manu
     </thead>
     <tbody>
       <tr v-for="e in entries" :key="e.id" :class="e.status">
-        <td class="name" :title="e.file.name">{{ e.file.name }}</td>
+        <td class="name" :title="e.archive ? `${e.archive} / ${e.file.name}` : e.file.name">
+          {{ e.file.name }}<small v-if="e.archive" class="archive">{{ e.archive }}</small>
+        </td>
         <td>{{ e.parsed?.kind ? KIND_LABELS[e.parsed.kind] : '–' }}</td>
         <td>{{ e.parsed?.formatId ?? '–' }}</td>
         <td>
@@ -84,6 +86,10 @@ th {
 small {
   margin-left: 0.4rem;
   color: var(--muted);
+}
+.archive {
+  display: block;
+  margin-left: 0;
 }
 .error {
   color: var(--danger);

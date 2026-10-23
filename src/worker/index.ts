@@ -2,6 +2,7 @@ import * as Comlink from 'comlink'
 import { getDocument } from 'pdfjs-dist'
 import * as pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs'
 import { parsePdf } from '../core/analyze'
+import { extractPdfs, type ArchiveEntry } from '../core/archive'
 import { buildReport } from '../core/calc/aggregate'
 import { buildWorkbook } from '../core/excel/build'
 import type { ParsedFile, Report } from '../core/model'
@@ -29,6 +30,18 @@ const api = {
     } finally {
       await task.destroy()
     }
+  },
+
+  unzip(data: ArrayBuffer): ArchiveEntry[] {
+    const entries = extractPdfs(new Uint8Array(data)).map((e) => ({
+      name: e.name,
+      // Own buffers so they can be transferred without copying.
+      data: e.data.byteLength === e.data.buffer.byteLength ? e.data : e.data.slice(),
+    }))
+    return Comlink.transfer(
+      entries,
+      entries.map((e) => e.data.buffer as ArrayBuffer),
+    )
   },
 
   buildReport(files: ParsedFile[]): Report {
